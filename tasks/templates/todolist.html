@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>To Do List</title>
+</head>
+<body>
+    <h1>To Do List</h1>
+    <!-- 입력 안내 -->
+    <p>중요한 할일에는 *을 입력해주세요.</p>
+
+    <!-- 할 일 추가 -->
+    <form method="post" action=".">
+        {% csrf_token %}
+        <label for="task_input">할 일을 입력해 주세요 : </label>
+        <input type="text" id="task_input" name="task">
+        <button type="submit">추가</button>
+    </form>
+
+    <!-- 완료되지 않은 항목 -->
+    <h2>할 일</h2>
+    <ul>
+        {% for task in incomplete_tasks %}
+            <li>
+                <form method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="complete" value="{{ task.id }}">
+                    <input type="checkbox" onchange="this.form.submit()">
+                    {{ task.title }}
+                    {% if task.important %}
+                        <span style="color: red; font-weight: bold;">[중요]</span>
+                    {% endif %}
+                </form>
+                <form method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="delete" value="{{ task.id }}">
+                    <button type="submit" style="border: none; background: none; color: red; cursor: pointer;">X</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <!-- 완료된 항목 -->
+    <h2>완료한 항목</h2>
+    <ul>
+        {% for task in completed_tasks %}
+            <li>
+                <form method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="complete" value="{{ task.id }}">
+                    <input type="checkbox" onchange="this.form.submit()" checked>
+                    <s>{{ task.title }}</s>
+                    {% if task.important %}
+                        <span style="color: red; font-weight: bold;">[!중요!]</span>
+                    {% endif %}
+                </form>
+                <form method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="delete" value="{{ task.id }}">
+                    <button type="submit" style="border: none; background: none; color: red; cursor: pointer;">X</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
