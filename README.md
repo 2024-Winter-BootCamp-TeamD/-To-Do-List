@@ -10,8 +10,8 @@
 |---------------------|-------------------------------|--------------------|
 |task_list	          | View all tasks (read & toggle)|	/                  |
 |create_task          |	Create a new task	            | /create/           |
-|edit_task (optional) | Edit task details             | /update/<id>/      |
-|delete_task          |	Delete a specific task        |	/delete-task/<id>/ |
+|edit_task (optional) | Edit task details             | /update/id/      |
+|delete_task          |	Delete a specific task        |	/delete-task/id/ |
 |toggle_task_status   |	Toggle completion status      | /                  |
 ---
 ## CRUD Features
