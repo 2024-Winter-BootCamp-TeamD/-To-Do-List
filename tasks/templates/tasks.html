@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To Do List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6; /* 목록 간 여백 추가 */
+        }
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 10px; /* 각 항목 사이 간격 */
+            display: flex;
+            align-items: center;
+        }
+        input[type="text"] {
+            padding: 5px;
+            margin-right: 10px;
+            width: 300px; /* 입력 칸 넓이 조정 */
+        }
+        button {
+            padding: 5px 10px;
+            margin-left: 10px;
+        }
+        .important {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>To Do List</h1>
+    <!-- 할 일을 추가하는 폼 -->
+    <form method="post" action="">
+        {% csrf_token %}
+        <input type="text" name="title" placeholder="할 일을 입력하세요 (* 입력 시 중요)" required>
+        <button type="submit">추가</button>
+    </form>
+
+    <!-- 할 일 목록 -->
+    <ul>
+        {% for task in tasks %}
+            <li>
+                <!-- 상태 토글 -->
+                <form method="post" style="display: inline;" action="{% url 'toggle_task_status' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="id" value="{{ task.id }}">
+                    <input type="checkbox" onchange="this.form.submit()" {% if task.completed %}checked{% endif %}>
+                </form>
+
+                <!-- 작업 제목 -->
+                <span {% if task.completed %}style="text-decoration: line-through;"{% endif %}>
+                    {{ task.title }}
+                    {% if task.important %}
+                        <span class="important">[중요]</span>
+                    {% endif %}
+                </span>
+
+                <!-- 삭제 버튼 -->
+                <form method="post" style="display: inline;" action="{% url 'delete_task' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="id" value="{{ task.id }}">
+                    <button type="submit" style="color: red;">X</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
