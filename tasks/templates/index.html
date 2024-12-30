@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            font-size: 2rem;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        input[type="text"] {
+            width: 300px;
+            padding: 5px;
+        }
+        button {
+            padding: 5px 10px;
+            margin-left: 10px;
+        }
+        .important {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+    <script>
+        // 작업 목록 가져오기
+        async function fetchTasks() {
+            const response = await fetch('/tasks/');
+            const tasks = await response.json();
+            const list = document.getElementById('task-list');
+            list.innerHTML = ''; // 기존 목록 초기화
+
+            tasks.forEach(task => {
+                const item = document.createElement('li');
+                item.innerHTML = `
+                    <input type="checkbox" ${task.completed ? 'checked' : ''} onclick="toggleTask(${task.id})">
+                    <span ${task.completed ? 'style="text-decoration: line-through;"' : ''}>
+                        ${task.title} ${task.important ? '<span class="important">[중요]</span>' : ''}
+                    </span>
+                    <button onclick="deleteTask(${task.id})" style="color: red;">X</button>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        // 새 작업 추가
+        async function addTask() {
+            const titleInput = document.getElementById('task-title');
+            const title = titleInput.value;
+            if (!title) {
+                alert('작업 제목을 입력하세요!');
+                return;
+            }
+            await fetch('/tasks/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ title, completed: false, important: title.includes('*') })
+            });
+            titleInput.value = '';
+            fetchTasks();
+        }
+
+        // 작업 상태 토글
+        async function toggleTask(id) {
+            await fetch(`/tasks/${id}/toggle/`, { method: 'PATCH' });
+            fetchTasks();
+        }
+
+        // 작업 삭제
+        async function deleteTask(id) {
+            await fetch(`/tasks/${id}/delete/`, { method: 'DELETE' });
+            fetchTasks();
+        }
+
+        // 페이지 로드 시 작업 목록 가져오기
+        document.addEventListener('DOMContentLoaded', fetchTasks);
+    </script>
+</head>
+<body>
+    <h1>To-Do List</h1>
+    <input type="text" id="task-title" placeholder="할 일을 입력하세요 (*는 중요)">
+    <button onclick="addTask()">추가</button>
+    <ul id="task-list"></ul>
+</body>
+</html>
