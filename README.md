@@ -73,3 +73,8 @@ Main Page (/)
  ├── Toggle Task Status ➡ /tasks/<id>/toggle/
  └── Delete Selected ➡ /tasks/delete-selected/
  ```
+
+## **Swagger Integration**
+- The project includes Swagger for interactive API documentation.
+### ***Swagger URLs***
+- Swagger UI: http://127.0.0.1:8000/swagger/
